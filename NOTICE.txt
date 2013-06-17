@@ -1,0 +1,14 @@
+Sublime 4 Autohotkey
+Copyright (C) 2013 Avi Aryan
+Licensed under Apache License v2.0
+
+Sublime 4 Autohotkey is nothing but a patch for Sublime Text to accelerate Autohotkey development. 
+
+Sublime 4 Autohotkey can be redistributed freely provided this file remains intact.
+More on redistribution (and editing) terms can be seen at (http://www.apache.org/licenses/LICENSE-2.0).
+
+Contact ==================
+
+www.avi.aryan123@gmail.com
+www.avi-win-tips.blogspot.com\2013\06\su4ahk.html
+www.github.com\avi-aryan
