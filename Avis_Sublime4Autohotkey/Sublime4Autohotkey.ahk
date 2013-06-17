@@ -186,13 +186,13 @@ me:
 Return
 
 updt:
-	URLDownloadToFile,https://raw.github.com/avi-aryan/sublime4autohotkey/raw/master/avis_sublime4autohotkey/version.txt,%a_scriptdir%/currentversion.txt
+	URLDownloadToFile,https://raw.github.com/avi-aryan/Sublime4Autohotkey/master/Avis_Sublime4Autohotkey/Version.txt,%a_scriptdir%/currentversion.txt
 	FileRead,version,%a_scriptdir%/currentversion.txt
 	IfGreater, version, %vrsn%
 	{
 		MsgBox, 48, Update Available, A new update is available.`nYour Version - %vrsn%`nCurrent Version - %version%`n`nGo to %web%
 			IfMsgBox OK
-				run BrowserRun(web)
+				BrowserRun(web)
 	}
 	else
 		MsgBox, 64, , No Updates Available!
