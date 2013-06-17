@@ -104,9 +104,17 @@ TooltipHelp(){
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
-	copiedcode := Ltrim( (temp_pos := SuperInstr(Clipboard, "=|+|-|*|?|:|(|% |%	", 0, false, 0)) ? Substr(Clipboard, temp_pos+1) : Clipboard )
+	copiedcode := Clipboard	
 	Send, +{End}^c{Left}
-	copiedcode .= Clipboard
+	copiedcode2 := Clipboard
+	if ( ( !Instr(copiedcode2, " ") ? Strlen(copiedcode2) : Instr(copiedcode2, " ") ) > ( !Instr(copiedcode2, "(") ? Strlen(copiedcode2) : Instr(copiedcode2, "(") ) )
+		needles := "=|+|-|*|?|:|(|% |%	|\|/|,|!|<|>"		;added /\,!<>
+	else
+		needles := "=|+|-|*|?|:|(|% |%	"
+	
+	copiedcode := Ltrim( (temp_pos := SuperInstr(copiedcode, needles, 0, false, 0)) ? Substr(copiedcode, temp_pos+1) : copiedcode )
+	copiedcode .= copiedcode2
+
 	comand := RegExReplace(copiedcode, "([A-Z]*)(,|`t| |\()(.*)", $1)
 
 	if (comand == "loop")
@@ -143,10 +151,18 @@ RunHelp(){
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
-	copiedcode := Ltrim( (temp_pos := SuperInstr(Clipboard, "=|+|-|*|?|:|(|% |%	", 0, false, 0)) ? Substr(Clipboard, temp_pos+1) : Clipboard )
+	copiedcode := Clipboard	
 	Send, +{End}^c{Left}
-	copiedcode .= Clipboard
+	copiedcode2 := Clipboard
+	if ( ( !Instr(copiedcode2, " ") ? Strlen(copiedcode2) : Instr(copiedcode2, " ") ) > ( !Instr(copiedcode2, "(") ? Strlen(copiedcode2) : Instr(copiedcode2, "(") ) )
+		needles := "=|+|-|*|?|:|(|% |%	|\|/|,|!|<|>"		;added /\,!<>
+	else
+		needles := "=|+|-|*|?|:|(|% |%	"
+	
+	copiedcode := Ltrim( (temp_pos := SuperInstr(copiedcode, needles, 0, false, 0)) ? Substr(copiedcode, temp_pos+1) : copiedcode )
+	copiedcode .= copiedcode2
 	comand := RegExReplace(copiedcode, "([A-Z]*)(,|`t| |\()(.*)", $1)
+	
 	BlockInput, off
 	Clipboard := oldclip
 	;;Running
