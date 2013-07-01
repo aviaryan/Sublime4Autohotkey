@@ -2,11 +2,11 @@
 
 ##########################################################
 Sublime 4 Autohotkey
-v2.0
+v2.3
 ##########################################################
 
 Copyright 2013 Avi Aryan  
-  
+
 Licensed under the Apache License, Version 2.0 (the "License");  
 you may not use this file except in compliance with the License.  
 You may obtain a copy of the License at  
@@ -21,74 +21,23 @@ limitations under the License.
 
 */
 
-;============================= CONFIGURE =================================
-
-IsHk := "F1"   ;launchs Help
-Helper := "F9"   ;gives Syntax of current command
-
-;=========================================================================
-
-#SingleInstance force
-SetBatchLines, -1
-Sendmode, Play
-SetWorkingDir, %A_ScriptDir%
-
-RunWait, "autohotkey.exe" "system/portable-correct.ahk"		;Correct portabalistaion
-
-FileCreateDir, temp
-OnExit, qt
-
-vrsn := 2.0 , Web := "http://www.avi-win-tips.blogspot.com/2013//06/su4ahk.html"
-
-FileDelete, temp\*.ahk
-global sublimepath := Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "sublime_text.exe"
-
-Menu, Tray, NoStandard
-Menu, Tray, Icon,%  Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "\Sublime 4 Autohotkey.exe"
-Menu, Tray, Tip, Sublime4Autohotkey v%vrsn%
-Menu, tray, add, Sublime4Autohotkey, me
-Menu, Tray, Add, Launcher	Alt+A, launcher
-Menu, Tray, Add
-Menu, Tray, Add, Open Me For Editing, scedit
-Menu, Tray, Add
-Menu, Tray, Add, Check for Updates, updt
-Menu, Tray, Add, Quit,qt
-Menu, Tray, Default, Sublime4Autohotkey
-
-SetTimer, sublimeahkcheck,400
-SetTimer, issublimethere, 1000
-
-run, Autohotkey.exe "helpers\launchq\launchq.ahk",,, lqpid
-
-cl_lq := new talk("LaunchQ.ahk")
+GoTo_AutoExecute()
+gosub, init
 return
 
-#IfWinActive, ahk_class PX_WINDOW_CLASS
-{
-	^n::NewAHK()
-}
+;-------------- CONFIGURE THE HOTKEYS HERE -------------------------------------------------------------------
 
-sublimeahkcheck:
-	IfWinActive, ahk_class PX_WINDOW_CLASS
-	{
-		WinGetTitle,curload
-		if !Instr(curload, ".ahk")
-		{
-			Hotkey,%Helper%,Help,Off
-			Hotkey, %ISHK%, Intsen, Off
-		}
-		else
-		{
-			Hotkey,%Helper%,Help,On
-			Hotkey, %ISHK%, Intsen, On
-		}
-	}
-	Else
-	{
-		Hotkey, %ISHK%, Intsen, Off
-		Hotkey,%Helper%,Help,Off
-	}
-Return
+#if Winactive("ahk_class PX_WINDOW_CLASS") and Instr( Win_GetTitle("ahk_class PX_WINDOW_CLASS") , ".ahk" )
+	F1::RunHelp()	;F1 chm Help196
+	F9::TooltipHelp()	;Tooltip Syntax Help
+	F7::Goto_Main_Gui()	;Shortcut for GoTo GUI
+#if
+
+#IfWinActive, ahk_class PX_WINDOW_CLASS
+	^n::NewAHK()	;Ctrl+N for new Ahk file
+#IfWinActive
+
+;-------------                            ---------------------------------------------------------------------
 
 issublimethere:
 	IfWinnotExist, ahk_class PX_WINDOW_CLASS
@@ -101,6 +50,7 @@ Return
 TooltipHelp(){
 	ToolTip
 	BlockInput, Sendandmouse
+	Cjcontrol(0)
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
@@ -108,9 +58,9 @@ TooltipHelp(){
 	Send, +{End}^c{Left}
 	copiedcode2 := Clipboard
 	if ( ( !Instr(copiedcode2, " ") ? Strlen(copiedcode2) : Instr(copiedcode2, " ") ) > ( !Instr(copiedcode2, "(") ? Strlen(copiedcode2) : Instr(copiedcode2, "(") ) )
-		needles := "=|+|-|*|?|:|(|% |%	|\|/|,|!|<|>"		;added /\,!<>
+		needles := "=|+|-|*|?|:|(|% |%	|\|/|,|!|<|>|.| "
 	else
-		needles := "=|+|-|*|?|:|(|% |%	"
+		needles := "%|=|."
 	
 	copiedcode := Ltrim( (temp_pos := SuperInstr(copiedcode, needles, 0, false, 0)) ? Substr(copiedcode, temp_pos+1) : copiedcode )
 	copiedcode .= copiedcode2
@@ -136,6 +86,7 @@ TooltipHelp(){
 	}
 	blockinput, off
 	Clipboard := oldclip
+	Cjcontrol(1)
 
 	IfNotEqual, realcomand
 	{
@@ -148,6 +99,7 @@ TooltipHelp(){
 RunHelp(){
 	Tooltip
 	BlockInput, Sendandmouse
+	Cjcontrol(0)
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
@@ -155,9 +107,9 @@ RunHelp(){
 	Send, +{End}^c{Left}
 	copiedcode2 := Clipboard
 	if ( ( !Instr(copiedcode2, " ") ? Strlen(copiedcode2) : Instr(copiedcode2, " ") ) > ( !Instr(copiedcode2, "(") ? Strlen(copiedcode2) : Instr(copiedcode2, "(") ) )
-		needles := "=|+|-|*|?|:|(|% |%	|\|/|,|!|<|>"		;added /\,!<>
+		needles := "=|+|-|*|?|:|(|% |%	|\|/|,|!|<|>|.| "
 	else
-		needles := "=|+|-|*|?|:|(|% |%	"
+		needles := "%|=|."
 	
 	copiedcode := Ltrim( (temp_pos := SuperInstr(copiedcode, needles, 0, false, 0)) ? Substr(copiedcode, temp_pos+1) : copiedcode )
 	copiedcode .= copiedcode2
@@ -165,15 +117,19 @@ RunHelp(){
 	
 	BlockInput, off
 	Clipboard := oldclip
+	
+	Cjcontrol(1)
 	;;Running
 	IfNotEqual, comand
 	{
-		Run, Autohotkey.chm,,Max
+		if !WinExist("AutoHotkey Help")
+			Run, Autohotkey.chm,,Max
 		WinWait, AutoHotkey Help
 		WinActivate, AutoHotkey Help
 		WinWaitActive, AutoHotkey Help
-		Send, !n
-		SendPlay, !w%comand%{enter}
+		SendMessage, 0x1330, 1,, SysTabControl321
+		SendMessage, 0x130C, 1,, SysTabControl321
+		SendPlay, +{Home}%comand%{enter}
 	}
 }
 
@@ -229,51 +185,76 @@ loopspecial(no){
 	return RTrim(realcomand, "`n")
 }
 
-
-help:
-	TooltipHelp()
-Return
-
-Intsen:
-	RunHelp()
-Return
-
 scedit:
 	run, %sublimepath% "%A_ScriptFullPath%"
 Return
 
-launcher:
-	cl_lq.runlabel("ShowGUI")
+help:
+	BrowserRun("http://avi-win-tips.blogspot.com/2013/06/su4ahkguide.html")
 return
 
-SuperInstr(Hay, Needles, return_min=true, Case=false, Startpoint=1, Occurrence=1){
-	
-	pos := return_min*Strlen(Hay)
-	if return_min
-	{
-		loop, parse, Needles,|
-			if ( pos > (var := Instr(Hay, A_LoopField, Case, startpoint, Occurrence)) )
-				pos := ( var = 0 ? pos : var )
-	}
-	else
-	{
-		loop, parse, Needles,|
-			if ( (var := Instr(Hay, A_LoopField, Case, startpoint, Occurrence)) > pos )
-				pos := var
-	}
-	return pos
-}
+launcher:
+	cl_lq.runlabel("ShowGUI", 0)
+return
 
 BrowserRun(site){
-RegRead, OutputVar, HKCR, http\shell\open\command 
-IfNotEqual, Outputvar
-{
-	StringReplace, OutputVar, OutputVar,"
-	SplitPath, OutputVar,,OutDir,,OutNameNoExt, OutDrive
-	run,% OutDir . "\" . OutNameNoExt . ".exe" . " """ . site . """"
-}
-else
-	run,% "iexplore.exe" . " """ . site . """"	;internet explorer
+	RegRead, OutputVar, HKCR, http\shell\open\command 
+	IfNotEqual, Outputvar
+	{
+		StringReplace, OutputVar, OutputVar,"
+		SplitPath, OutputVar,,OutDir,,OutNameNoExt, OutDrive
+		run,% OutDir . "\" . OutNameNoExt . ".exe" . " """ . site . """"
+	}
+	else
+		run,% "iexplore.exe" . " """ . site . """"	;internet explorer
 }
 
+Win_GetTitle(WinTitle){
+	WinGetTitle, temp, %WinTitle%
+	return temp
+}
+
+;############################# init ################################################
+
+init:
+
+#SingleInstance force
+SetBatchLines, -1
+Sendmode, Play
+SetWorkingDir, %A_ScriptDir%
+
+RunWait, "autohotkey.exe" "system/portable-correct.ahk"		;Correct portabalistaion
+
+FileCreateDir, temp
+OnExit, qt
+
+vrsn := 2.3 , Web := "http://www.avi-win-tips.blogspot.com/2013//06/su4ahk.html"
+
+FileDelete, temp\*.ahk
+global sublimepath := Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "sublime_text.exe"
+
+Menu, Tray, NoStandard
+Menu, Tray, Icon,%  Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "\Sublime 4 Autohotkey.exe"
+Menu, Tray, Tip, Sublime4Autohotkey v%vrsn%
+Menu, tray, add, Sublime4Autohotkey, me
+Menu, Tray, Add, Launcher	Alt+A (Def), launcher
+Menu, Tray, Add
+Menu, Tray, Add, Open Me For Editing, scedit
+Menu, Tray, Add
+Menu, Tray, Add, Check for Updates, updt
+Menu, Tray, Add, See online Help, help
+Menu, Tray, Add, Quit,qt
+Menu, Tray, Default, Sublime4Autohotkey
+
+SetTimer, issublimethere, 1000
+
+run, Autohotkey.exe "helpers\launchq\launchq.ahk",,, lqpid
+cl_lq := new talk("LaunchQ.ahk")
+
+return
+
+;######################################################################################
+
 #include, %A_ScriptDir%\helpers\lib\talk.ahk
+#include, %A_scriptdir%\helpers\goto\goto.ahk
+#Include, %A_scriptdir%\helpers\lib\ClipjumpCommunicator.ahk
