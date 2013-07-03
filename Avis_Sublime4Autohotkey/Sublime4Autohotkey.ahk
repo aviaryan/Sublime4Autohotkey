@@ -234,7 +234,7 @@ FileDelete, temp\*.ahk
 global sublimepath := Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "sublime_text.exe"
 
 Menu, Tray, NoStandard
-Menu, Tray, Icon,%  Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "\Sublime 4 Autohotkey.exe"
+Menu, Tray, Icon,%  Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "Sublime 4 Autohotkey.exe"
 Menu, Tray, Tip, Sublime4Autohotkey v%vrsn%
 Menu, tray, add, Sublime4Autohotkey, me
 Menu, Tray, Add, Launcher	Alt+A (Def), launcher
