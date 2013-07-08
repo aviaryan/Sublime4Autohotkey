@@ -2,7 +2,7 @@
 
 ##########################################################
 Sublime 4 Autohotkey
-v2.3
+v2.4
 ##########################################################
 
 Copyright 2013 Avi Aryan  
@@ -21,14 +21,14 @@ limitations under the License.
 
 */
 
-GoTo_AutoExecute()
+GoTo_AutoExecute(1)
 gosub, init
 return
 
 ;-------------- CONFIGURE THE HOTKEYS HERE -------------------------------------------------------------------
 
 #if Winactive("ahk_class PX_WINDOW_CLASS") and Instr( Win_GetTitle("ahk_class PX_WINDOW_CLASS") , ".ahk" )
-	F1::RunHelp()	;F1 chm Help196
+	F1::RunHelp()	;F1 chm Help
 	F9::TooltipHelp()	;Tooltip Syntax Help
 	F7::Goto_Main_Gui()	;Shortcut for GoTo GUI
 #if
@@ -40,7 +40,7 @@ return
 ;-------------                            ---------------------------------------------------------------------
 
 issublimethere:
-	IfWinnotExist, ahk_class PX_WINDOW_CLASS
+	If !WinExist("ahk_class PX_WINDOW_CLASS")
 	{
 		Process,close,%lqpid%
 		Exitapp
@@ -50,7 +50,9 @@ Return
 TooltipHelp(){
 	ToolTip
 	BlockInput, Sendandmouse
-	Cjcontrol(0)
+	
+	if cjconst := Check4Clipjump()		;Disable clipjump
+		Cjcontrol(0)
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
@@ -86,7 +88,9 @@ TooltipHelp(){
 	}
 	blockinput, off
 	Clipboard := oldclip
-	Cjcontrol(1)
+	
+	if cjconst
+		Cjcontrol(1)
 
 	IfNotEqual, realcomand
 	{
@@ -99,7 +103,8 @@ TooltipHelp(){
 RunHelp(){
 	Tooltip
 	BlockInput, Sendandmouse
-	Cjcontrol(0)
+	if cjconst := Check4Clipjump()
+		Cjcontrol(0)
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
@@ -118,7 +123,8 @@ RunHelp(){
 	BlockInput, off
 	Clipboard := oldclip
 	
-	Cjcontrol(1)
+	if cjconst
+		Cjcontrol(1)
 	;;Running
 	IfNotEqual, comand
 	{
@@ -214,11 +220,23 @@ Win_GetTitle(WinTitle){
 	return temp
 }
 
+Check4Clipjump(){
+	
+	HW := A_DetectHiddenWindows , TM := A_TitleMatchMode
+	DetectHiddenWindows, On
+	SetTitleMatchMode, 2
+	Process, Exist, Clipjump.exe
+	E := ErrorLevel , A := WinExist("\Clipjump.ahk - ahk_class AutoHotkey")
+	DetectHiddenWindows,% HW
+	SetTitleMatchMode,% TM
+	if A or E
+		return 1
+}
 ;############################# init ################################################
 
 init:
 
-#SingleInstance force
+#SingleInstance ignore
 SetBatchLines, -1
 Sendmode, Play
 SetWorkingDir, %A_ScriptDir%
@@ -228,13 +246,15 @@ RunWait, "autohotkey.exe" "system/portable-correct.ahk"		;Correct portabalistaio
 FileCreateDir, temp
 OnExit, qt
 
-vrsn := 2.3 , Web := "http://www.avi-win-tips.blogspot.com/2013//06/su4ahk.html"
+vrsn := 2.4 , Web := "http://www.avi-win-tips.blogspot.com/2013//06/su4ahk.html"
 
 FileDelete, temp\*.ahk
 global sublimepath := Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "sublime_text.exe"
 
 Menu, Tray, NoStandard
-Menu, Tray, Icon,%  Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "Sublime 4 Autohotkey.exe"
+try {
+	Menu, Tray, Icon,%  Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "Sublime 4 Autohotkey.exe"
+}
 Menu, Tray, Tip, Sublime4Autohotkey v%vrsn%
 Menu, tray, add, Sublime4Autohotkey, me
 Menu, Tray, Add, Launcher	Alt+A (Def), launcher

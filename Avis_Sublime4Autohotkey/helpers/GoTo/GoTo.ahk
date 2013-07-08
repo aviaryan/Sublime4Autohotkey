@@ -1,23 +1,33 @@
 /*
 #####################
-GoTo v0.1
+GoTo v0.9
 Avi Aryan
 #####################
 
-GoTo functions, labels, hotkeys and hotstrings in any editor.
-The only requirement is that the Editor shows file full path in Title Bar and has a Goto (Ctrl+G) option
+Go To functions, labels, hotkeys and hotstrings in any editor.
+The only requirement is that the Editor shows file full path in Title Bar and has a Goto (Ctrl+G) option.
+Examples of such editors - Notepad++, Sublime Text, PSPad, ConTEXT
+
+Any script which shows the full path and has a goto option is vaild
 
 */
 
-GoTo_AutoExecute(){
-	#Persistent
-	SetWorkingDir,% A_scriptdir
+GoTo_AutoExecute(resizable=true, WorkingDir=""){
+global
+
+	SetWorkingDir,% ( WorkingDir == "" ) ? A_scriptdir : WorkingDir
+	SetBatchLines, -1
 	FileCreateDir, gotoCache
 	FileDelete, gotoCache\*.gotolist
-	SetTimer, filecheck, 500
+	SetTimer, filecheck, 200
+	goto_cache := {}
+	if resizable
+		OnMessage(0x201, "DragGotoGui") ; WM_LBUTTONDOWN
 }
 
-ParseFile(File) {
+GoTo_Readfile(File) {
+	Critical, On
+
 	static filecount , commentneedle := A_space ";|" A_tab	";"
 	
 	if ( filecount_N := fileiscached(File) )
@@ -34,14 +44,20 @@ ParseFile(File) {
 		readline := Trim( A_LoopReadLine )
 		if block_comments
 			if Instr(readline, "*/") = 1
-				block_comments := 0 , continue
+			{
+				block_comments := 0
+				continue
+			}
 			else continue
 
 		if Instr(readline, ";") = 1
 			continue
 
 		if Instr(readline, "/*") = 1
-			block_comments := 1 , continue
+		{
+			block_comments := 1
+			continue
+		}
 		
 		readline := Trim( Substr(readline, 1, SuperInstr(readline, commentneedle, 1) ? SuperInstr(readline, commentneedle, 1)-1 : Strlen(readline)) )
 
@@ -54,9 +70,15 @@ ParseFile(File) {
 		else if Check4func(readline, A_index, file)
 			CreateCache(filename, "func", Substr(readline, 1, Instr(readline, "(")) ")", A_index)
 	}
+	SortCache(filename)
 }
 
 CreateCache(hostfile, type, data, linenum){
+	if type = func
+		if ( Substr( data, 1, SuperInstr(data, " |`t|,|(", 1)-1 ) == "while" )
+			return
+	;Exceptions are listed above
+
 	FileAppend,% data ">" linenum "`n",% "Gotocache\" hostfile "-" type ".gotolist"
 }
 
@@ -64,7 +86,7 @@ Check4Hotkey(line) {
 ;The function assumes line is trimmed using Trim() and then checked for ; comment
 
 	if ( Instr(line, "::") = 1 ) and ( Instr(line, ":", false, 0) = 3 )		;hotstring
-		return ":"
+		return ""
 	hK := Substr( line, 1, ( Instr(line, ":::") ? Instr(line, ":::")+2 : ( Instr(line, "::") ? Instr(line, "::")+1 : Strlen(line)+2 ) ) - Strlen(line) - 2)
 	if hK = 
 		return
@@ -98,20 +120,26 @@ Check4func(readline, linenum, file){
 
 		if block_comments
 			if Instr(readline, "*/") = 1
-				block_comments := 0 , continue
+			{
+				block_comments := 0
+				continue
+			}
 			else continue
+		
 		if Instr(readline, "/*") = 1
-			block_comments := 1 , continue
+		{
+			block_comments := 1
+			continue
+		}
 
 		return Instr(cl, "{") = 1 ? 1 : 0
 	}
 }
 
 filecheck:
-	FileGetTime, Timeforfile,% GetActiveFile(), M
-	if ( Timeforfile != Lasttimefile ) and ( Timeforfile != "" )
-		ParseFile(GetActiveFile())
-	Lasttimefile := Timeforfile
+	FileGetTime, Timeforfile,% goto_tempfile := GetActiveFile(), M
+	if ( goto_cache[goto_tempfile] != Timeforfile )
+		goto_cache[goto_tempfile] := Timeforfile , Goto_Readfile(goto_tempfile)
 	return
 
 fileiscached(file){
@@ -131,42 +159,44 @@ Goto_Main_GUI()
 	
 	if ( Activefile_old != Activefileindex )
 	{
-		Guicontrol, Main:, Mainlist,% "|"
-		Guicontrol, Main:Choose, maintab, 1
+		Guicontrol, Goto:, Mainlist,% "|"
+		Guicontrol, Goto:Choose, maintab, 1
 		Update_GUI("-label", activefileindex)
 	}
 	
 	if !IsGuicreated
 	{
-		Gui, Main:New
+		Gui, Goto:New
 		Gui, +AlwaysOnTop -Caption +ToolWindow
 		Gui, Margin, 3, 3
 		Gui, Font, s11, Consolas
 		Gui, Add, Tab2,% "w" 310 " h30 vmaintab gtabclick AltSubmit", Labels|Functions|Hotkeys|Hotstrings
 		Gui, Tab
 		Gui, Font, s10, Courier New
-		Gui, Add, Dropdownlist,% "xs y+10 h30 r20 vMainList gDDLclick Altsubmit w" 300
+		Gui, Add, DropDownList,% "xs y+10 h30 r20 vMainList gDDLclick Altsubmit w" 300
 		Update_GUI("-label", activefileindex)
 		IsGuicreated := 1
 	}
 	if !WinExist("GoTo ahk_class AutoHotkeyGUI")
-		Gui, Main:Show,, GoTo
+		Gui, Goto:Show,, GoTo
 	else
-		Gui, Main:Hide
-
+		Gui, Goto:Hide
 	Activefile_old := Activefileindex
 	return
 
 DDLclick:
-	Gui, Main:submit, nohide
+	Gui, Goto:submit, nohide
 	GoToMacro(ActivefileIndex, Typefromtab(Maintab), Mainlist)
 	return
 
 tabClick:
-	Gui, Main:submit, nohide
+	Gui, Goto:submit, nohide
 	Update_GUI(Typefromtab(maintab), Activefileindex)
 	return
 
+GotoGUIEscape:
+	Gui, Goto:Hide
+	return
 }
 
 Update_GUI(mode, fileindex){
@@ -174,26 +204,26 @@ Update_GUI(mode, fileindex){
 		return
 	loop, read, gotoCache\%fileIndex%%Mode%.gotolist
 		MainList .= "|" Substr(A_loopreadline, 1, Instr(A_loopreadline, ">", 0, 0)-1)
-	Guicontrol, Main:,Mainlist,% !MainList ? "|" : Mainlist
+	Guicontrol, Goto:,Mainlist,% !MainList ? "|" : Mainlist
 }
 
 GoToMacro(Fileindex, type, linenum){
 	BlockInput, On
-	Gui, Main:Hide
+	Gui, Goto:Hide
 	Filereadline, cl, gotocache\%Fileindex%%type%.gotolist, %linenum%
 	runline := Substr(cl, Instr(cl, ">", 0, 0)+1)
-	Send, ^g
+	SendInput, ^g
 	sleep, 100
-	Send,% runline "{Enter}"
+	SendInput,% runline "{Enter}"
 	BlockInput, Off
 }
 ;---------------------------------------------------------------------------------------------------------
 
 GetActiveFile(){
 	WinGetActiveTitle, Title
-	if !Instr(title, ".ahk")
+	if !( Instr(title, ".ahk") and Instr(title, ":\") )
 		return ""
-	return Trim( Substr(Title, 1, SuperInstr(Title, "-|*|•", 0, 0, 0)-1) , " `t*•-")
+	return Trim( Substr( Title, temp := Instr(Title, ":\")-1, Instr(Title, ".ahk", 0, 0)-temp+4 ) ) 
 }
 
 TypefromTab(TabCount){
@@ -207,6 +237,23 @@ TypefromTab(TabCount){
 	else
 		return "-hotstr"
 }
+
+SortCache(file){
+
+	static type := "label,func,hotkey,hotstr"
+	loop, parse, type,`,
+	{
+		FileRead, ovar,% "gotocache\" file "-" A_LoopField ".gotolist"
+		Sort, ovar
+		FileDelete,% "gotocache\" file "-" A_LoopField ".gotolist"
+		FileAppend,% ovar,% "gotocache\" file "-" A_LoopField ".gotolist"
+	}
+}
+
+DragGotoGui(){		;Thanks Pulover
+	PostMessage, 0xA1, 2,,, A
+}
+
 ;Helper Function(s) --------------------------------------------------------------------------------------
 /*
 SuperInstr()

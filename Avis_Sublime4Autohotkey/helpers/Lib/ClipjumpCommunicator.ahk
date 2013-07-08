@@ -49,6 +49,6 @@ CjControl(ByRef StringToSend)  ; ByRef saves a little memory in this case.
     DetectHiddenWindows %Prev_DetectHiddenWindows%
     SetTitleMatchMode %Prev_TitleMatchMode%
 	
-	sleep 100		;Additional sleep to allow var assignment on Clipjump's side
+	sleep 150		;Additional sleep to allow var assignment on Clipjump's side
     return ErrorLevel  ; Return SendMessage's reply back to our caller.
 }
