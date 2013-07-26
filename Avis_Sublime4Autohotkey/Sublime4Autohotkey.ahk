@@ -51,8 +51,7 @@ TooltipHelp(){
 	ToolTip
 	BlockInput, Sendandmouse
 	
-	if cjconst := Check4Clipjump()		;Disable clipjump
-		Cjcontrol(0)
+	if cjconst := Cjcontrol(0)
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
@@ -103,8 +102,7 @@ TooltipHelp(){
 RunHelp(){
 	Tooltip
 	BlockInput, Sendandmouse
-	if cjconst := Check4Clipjump()
-		Cjcontrol(0)
+	cjconst := Cjcontrol(0)
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
@@ -220,18 +218,6 @@ Win_GetTitle(WinTitle){
 	return temp
 }
 
-Check4Clipjump(){
-	
-	HW := A_DetectHiddenWindows , TM := A_TitleMatchMode
-	DetectHiddenWindows, On
-	SetTitleMatchMode, 2
-	Process, Exist, Clipjump.exe
-	E := ErrorLevel , A := WinExist("\Clipjump.ahk - ahk_class AutoHotkey")
-	DetectHiddenWindows,% HW
-	SetTitleMatchMode,% TM
-	if A or E
-		return 1
-}
 ;############################# init ################################################
 
 init:

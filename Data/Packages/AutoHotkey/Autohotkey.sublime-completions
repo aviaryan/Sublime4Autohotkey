@@ -1,3 +1,5 @@
+      // Made by Avi Aryan
+      // https://github.com/avi-aryan/AutoHotKey
 {
         "scope": "source.ahk",
         "completions": [
@@ -68,6 +70,7 @@
             { "trigger": "FileCreateDir", "contents": "FileCreateDir, ${1:Path}" },
             { "trigger": "FileCreateShortcut", "contents": "FileCreateShortcut, ${1:Target}, ${2:C:\\My Shortcut.lnk [}, ${3:WorkingDir}, ${4:Args}, ${5:Description}, ${6:IconFile}, ${7:ShortcutKey}, ${8:IconNumber}" },
             { "trigger": "FileDelete", "contents": "FileDelete, ${1:FilePattern}" },
+            { "trigger": "FileEncoding", "contents": "FileEncoding, ${1:Encoding}" },
             { "trigger": "FileGetAttrib", "contents": "FileGetAttrib, ${1:OutputVar(RASHNDOCT) [}, ${2:Filename]}" },
             { "trigger": "FileGetSize", "contents": "FileGetSize, ${1:OutputVar [}, ${2:Filename}, ${3:Units]}" },
             { "trigger": "FileGetTime", "contents": "FileGetTime, ${1:OutputVar [}, ${2:Filename}, ${3:WhichTime (M}, ${4:C}, ${5:or A -- default is M)]}" },
@@ -217,6 +220,7 @@
             { "trigger": "WinGetClass", "contents": "WinGetClass, ${1:OutputVar [}, ${2:WinTitle}, ${3:WinText}, ${4:ExcludeTitle}, ${5:ExcludeText]}" },
             { "trigger": "WinGetText", "contents": "WinGetText, ${1:OutputVar [}, ${2:WinTitle}, ${3:WinText}, ${4:ExcludeTitle}, ${5:ExcludeText]}" },
             { "trigger": "WinGetTitle", "contents": "WinGetTitle, ${1:OutputVar [}, ${2:WinTitle}, ${3:WinText}, ${4:ExcludeTitle}, ${5:ExcludeText]}" },
+            { "trigger": "WinGetPos", "contents": "WinGetPos, ${1:[ X }, ${2:Y}, ${3:Width}, ${4:Height}, ${5:WinTitle} ...]" },
             { "trigger": "WinHide", "contents": "WinHide,${1:[ WinTitle}, ${2:WinText}, ${3:ExcludeTitle}, ${4:ExcludeText]}" },
             { "trigger": "WinKill", "contents": "WinKill,${1:[ WinTitle}, ${2:WinText}, ${3:SecondsToWait}, ${4:ExcludeTitle}, ${5:ExcludeText]}" },
             { "trigger": "WinMaximize", "contents": "WinMaximize, ${1:[ WinTitle}, ${2:WinText}, ${3:ExcludeTitle}, ${4:ExcludeText]}" },
@@ -233,9 +237,15 @@
             { "trigger": "WinWaitClose", "contents": "WinWaitClose, ${1:WinTitle}, ${2:WinText}, ${3:Seconds [}, ${4:ExcludeTitle}, ${5:ExcludeText]}" },
             { "trigger": "WinWaitNotActive", "contents": "WinWaitNotActive, ${1:[ WinTitle}, ${2:WinText}, ${3:Seconds}, ${4:ExcludeTitle}, ${5:ExcludeText]}" },
 
+            { "trigger": "try", "contents": "try " },
+            { "trigger": "catch ", "contents": "catch " },
 
             // Functions
 
+            { "trigger": "__New", "contents": "__New(${1:Params})" },
+            { "trigger": "__Get", "contents": "__Get(${1:Params})" },
+            { "trigger": "__Set", "contents": "__Set(${1:Params})" },
+            
             { "trigger": "Abs(Number)", "contents": "Abs(${1:Number})" },
             { "trigger": "ACos(Number)", "contents": "ACos(${1:Number})" },
             { "trigger": "Asc(String)", "contents": "Asc(${1:String})" },
@@ -243,11 +253,26 @@
             { "trigger": "ATan(Number)", "contents": "ATan(${1:Number})" },
             { "trigger": "Ceil(Number)", "contents": "Ceil(${1:Number})" },
             { "trigger": "Chr(Number)", "contents": "Chr(${1:Number})" },
+            { "trigger": "ComObjCreate()", "contents": "ComObjCreate( " },
+            { "trigger": "ComObjActive()", "contents": "ComObjActive( " },
+            { "trigger": "ComObjArray()", "contents": "ComObjArray( " },
+            { "trigger": "ComObjConnect()", "contents": "ComObjConnect( " },
+            { "trigger": "ComObjEnwrap()", "contents": "ComObjEnwrap( " },
+            { "trigger": "ComObjError()", "contents": "ComObjError( " },
+            { "trigger": "ComObjFlags()", "contents": "ComObjFlags( " },
+            { "trigger": "ComObjGet()", "contents": "ComObjGet( " },
+            { "trigger": "ComObjMissing()", "contents": "ComObjMissing( " },
+            { "trigger": "ComObjParameter()", "contents": "ComObjParameter( " },
+            { "trigger": "ComObjQuery()", "contents": "ComObjQuery( " },
+            { "trigger": "ComObjType()", "contents": "ComObjType( " },
+            { "trigger": "ComObjUnwrap()", "contents": "ComObjUnwrap( " },
+            { "trigger": "ComObjValue()", "contents": "ComObjValue( " },
             { "trigger": "Cos(Number)", "contents": "Cos(${1:Number})" },
             { "trigger": "DllCall", "contents": "DllCall(\"${1:[DllFile\\]Function}\",${2:[ Type1}, ${3:Arg1}, ${4:Type2}, ${5:Arg2}, ${6:\"Cdecl ReturnType\"]})" },
             { "trigger": "Exp(Number)", "contents": "Exp(${1:Number})" },
             { "trigger": "FileExist()", "contents": "FileExist(\"${1:FilePattern}\")" },
             { "trigger": "Floor(Number)", "contents": "Floor(${1:Number})" },
+            { "trigger": "FileOpen(Filename, Flags [,Encoding])", "contents": "FileOpen(${1:File}, ${2:Flags} ${3:[,Encoding]})" },
             { "trigger": "GetKeyState()", "contents": "GetKeyState(${1:KeyName [}, ${2:\"P\" or \"T\"]})" },
             { "trigger": "IL_Add()", "contents": "IL_Add(${1:ImageListID}, ${2:Filename [}, ${3:IconNumber}, ${4:ResizeNonIcon?]})" },
             { "trigger": "IL_Create()", "contents": "IL_Create(${1:[InitialCount}, ${2:GrowCount}, ${3:LargeIcons?]})" },
@@ -255,6 +280,7 @@
             { "trigger": "InStr()", "contents": "InStr(${1:Haystack}, ${2:Needle [}, ${3:CaseSensitive?}, ${4:StartingPos]})" },
             { "trigger": "IsFunc(FunctionName)", "contents": "IsFunc(${1:FunctionName})" },
             { "trigger": "IsLabel(LabelName)", "contents": "IsLabel(${1:LabelName})" },
+            { "trigger": "IsObject(ObjName) ", "contents": "IsObject(${1:ObjName})" },
             { "trigger": "Ln(Number)", "contents": "Ln(${1:Number})" },
             { "trigger": "Log(Number)", "contents": "Log(${1:Number})" },
             { "trigger": "LV_Add()", "contents": "LV_Add({1:[Options}, ${2:Col1}, ${3:Col2}, ${4:...]})" },
@@ -348,6 +374,7 @@
             { "trigger": "A_IsCritical", "contents": "A_IsCritical" },
             { "trigger": "A_IsPaused", "contents": "A_IsPaused" },
             { "trigger": "A_IsSuspended", "contents": "A_IsSuspended" },
+            { "trigger": "A_IsUnicode", "contents": "A_IsUnicode" },
             { "trigger": "A_KeyDelay", "contents": "A_KeyDelay" },
             { "trigger": "A_Language", "contents": "A_Language" },
             { "trigger": "A_LastError", "contents": "A_LastError" },
@@ -433,8 +460,9 @@
             { "trigger": "ComSpec", "contents": "ComSpec" },
             { "trigger": "ErrorLevel", "contents": "ErrorLevel" },
             { "trigger": "ProgramFiles", "contents": "ProgramFiles" },
-            { "trigger": "True", "contents": "True" },
-            { "trigger": "False", "contents": "False" },
+            { "trigger": "true", "contents": "true" },
+            { "trigger": "false", "contents": "false" },
+            { "trigger": "this", "contents": "this" },
 
             //Keys--
             { "trigger": "Shift", "contents": "Shift" },
@@ -916,26 +944,16 @@
             { "trigger": "REG_MULTI_SZ", "contents": "REG_MULTI_SZ" },
             { "trigger": "REG_DWORD", "contents": "REG_DWORD" },
             { "trigger": "REG_BINARY", "contents": "REG_BINARY" },
-            { "trigger": "ComObjCreate", "contents": "ComObjCreate()" },
+            { "trigger": "new", "contents": "new " },
+
+            //  Extra common-keywords
+
 		{ "trigger": "Notepad", "contents": "Notepad" },
 		{ "trigger": "CabinetWClass", "contents": "CabinetWClass" },
 		{ "trigger": "Progman", "contents": "Progman" },
-		{ "trigger": "ComObjActive", "contents": "ComObjActive" },
-		{ "trigger": "ComObjArray", "contents": "ComObjArray" },
-		{ "trigger": "ComObjConnect", "contents": "ComObjConnect" },
-		{ "trigger": "ComObjEnwrap", "contents": "ComObjEnwrap" },
-		{ "trigger": "ComObjError", "contents": "ComObjError" },
-		{ "trigger": "ComObjFlags", "contents": "ComObjFlags" },
-		{ "trigger": "ComObjGet", "contents": "ComObjGet" },
-		{ "trigger": "ComObjMissing", "contents": "ComObjMissing" },
-		{ "trigger": "ComObjParameter", "contents": "ComObjParameter" },
-		{ "trigger": "ComObjQuery", "contents": "ComObjQuery" },
-		{ "trigger": "ComObjType", "contents": "ComObjType" },
-		{ "trigger": "ComObjUnwrap", "contents": "ComObjUnwrap" },
-		{ "trigger": "ComObjValue", "contents": "ComObjValue" },
 		{ "trigger": "InternetExplorer.Application", "contents": "InternetExplorer.Application" },
 		{ "trigger": "AutoHotkey", "contents": "AutoHotkey" },
 		{ "trigger": "AutoHotkeyGUI", "contents": "AutoHotkeyGUI" },
-		{ "trigger": "Msgbox <blank>", "contents": "Msgbox, " }
+		{ "trigger": "Msgbox ", "contents": "Msgbox, " }
 ]
 }
