@@ -51,7 +51,7 @@ TooltipHelp(){
 	ToolTip
 	BlockInput, Sendandmouse
 	
-	if cjconst := Cjcontrol(0)
+	cjconst := Cjcontrol(0)
 	
 	oldclip := ClipboardAll
 	Send, +{Home}^c{Right}
