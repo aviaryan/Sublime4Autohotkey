@@ -33,9 +33,9 @@ return
 	F7::Goto_Main_Gui()	;Shortcut for GoTo GUI
 #if
 
-#IfWinActive, ahk_class PX_WINDOW_CLASS
+#If Winactive("ahk_class PX_WINDOW_CLASS")
 	^n::NewAHK()	;Ctrl+N for new Ahk file
-#IfWinActive
+#If
 
 ;-------------                            ---------------------------------------------------------------------
 
