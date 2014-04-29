@@ -2,27 +2,28 @@
 
 ##########################################################
 Sublime 4 Autohotkey
-v2.4
 ##########################################################
 
 Copyright 2013 Avi Aryan  
 
 Licensed under the Apache License, Version 2.0 (the "License");  
 you may not use this file except in compliance with the License.  
-You may obtain a copy of the License at  
-  
+You may obtain a copy of the License at
+
 http://www.apache.org/licenses/LICENSE-2.0  
   
 Unless required by applicable law or agreed to in writing, software 
 distributed under the License is distributed on an "AS IS" BASIS,  
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and  
 limitations under the License. 
 
 */
 
-GoTo_AutoExecute(1)
 gosub, init
+global GOTOS := {}
+GoTo_AutoExecute(1)
+FileRemoveDir, gotocache, 1
 return
 
 ;-------------- CONFIGURE THE HOTKEYS HERE -------------------------------------------------------------------
@@ -95,11 +96,13 @@ TooltipHelp(){
 	{
 		Hotkey, ~LButton,toolrem,On
 		Hotkey, ~Enter,toolrem,On
+		Hotkey, Esc, toolrem, On
 		ToolTip, %realcomand%
 	}
 }
 
 RunHelp(){
+	static PID
 	Tooltip
 	BlockInput, Sendandmouse
 	cjconst := Cjcontrol(0)
@@ -126,8 +129,9 @@ RunHelp(){
 	;;Running
 	IfNotEqual, comand
 	{
-		if !WinExist("AutoHotkey Help")
-			Run, Autohotkey.chm,,Max
+		if WinExist("AutoHotkey Help") && PID
+			Process, Close, % PID
+		Run, Autohotkey.chm,,Max, PID
 		WinWait, AutoHotkey Help
 		WinActivate, AutoHotkey Help
 		WinWaitActive, AutoHotkey Help
@@ -152,17 +156,20 @@ NewAHK(){
 
 qt:
 	Process, close, %lqpid%
-	Process, close, sublime_text.exe
+	;Process, close, sublime_text.exe  ;- dont close ST
 	ExitApp
 return
 
 me:
-	Text := "Sublime 4 Autohotkey by Avi Aryan `nversion " vrsn
+	Text := "Sublime 4 Autohotkey by Avi Aryan `nversion " vrsn "`n`n"
+	. "F1 -> Context-Sensitive Help`n"
+	. "F9 -> Tooltip Syntax Help`n"
+	. "F7 -> GoTo keywords"
 	MsgBox, 64, About, %Text%
 Return
 
 updt:
-	URLDownloadToFile,https://raw.github.com/avi-aryan/Sublime4Autohotkey/master/Avis_Sublime4Autohotkey/Version.txt,%a_scriptdir%/currentversion.txt
+	URLDownloadToFile, https://raw.github.com/aviaryan/Sublime4Autohotkey/master/Avis_Sublime4Autohotkey/Version.txt,%a_scriptdir%/currentversion.txt
 	FileRead,version,%a_scriptdir%/currentversion.txt
 	IfGreater, version, %vrsn%
 	{
@@ -177,6 +184,7 @@ Return
 toolrem:
 	Hotkey,~Lbutton,toolrem,Off
 	Hotkey,~Enter,toolrem,Off
+	Hotkey, Esc, toolrem, Off
 	ToolTip
 Return
 
@@ -232,7 +240,7 @@ RunWait, "autohotkey.exe" "system/portable-correct.ahk"		;Correct portabalistaio
 FileCreateDir, temp
 OnExit, qt
 
-vrsn := 2.4 , Web := "http://www.avi-win-tips.blogspot.com/2013//06/su4ahk.html"
+vrsn := 2.6 , Web := "http://www.avi-win-tips.blogspot.com/2013//06/su4ahk.html"
 
 FileDelete, temp\*.ahk
 global sublimepath := Substr(A_scriptdir, 1, Instr(A_scriptdir, "\", false, 0)) "sublime_text.exe"
@@ -256,7 +264,6 @@ SetTimer, issublimethere, 1000
 
 run, Autohotkey.exe "helpers\launchq\launchq.ahk",,, lqpid
 cl_lq := new talk("LaunchQ.ahk")
-
 return
 
 ;######################################################################################

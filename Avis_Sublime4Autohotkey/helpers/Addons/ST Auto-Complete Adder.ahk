@@ -31,7 +31,7 @@ Gui, Add, Text, x2 y0 w490 h30 vfiledrop, Drag a (.sublime-completions file) her
 Gui, Font, s9
 Gui, Add, Edit, x2 y30 w490 h40 vfilepath +Disabled +Wrap, <<<<DRAG>>>>>
 Gui, font, s11
-Gui, Add, Text, x2 y70 w490 h20 , Drag a file on edit box to load the lists
+Gui, Add, Text, x2 y70 w490 h20 , Drag a file in the below field to load its contents into it
 Gui, Add, Text, x2 y90 w500 h30 , Duplicates will not be added
 Gui, Font, S10 CBlack, Verdana
 Gui, Add, Edit, x2 y130 w490 h420 vlist,Your List should be typed here.`nOne Completion/line`n`nlike----`n`nrun`nparse`nbuild`nargs`n....

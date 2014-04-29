@@ -1,5 +1,5 @@
       // Made by Avi Aryan
-      // https://github.com/avi-aryan/AutoHotkey
+      // https://github.com/aviaryan/AutoHotkey
 {
         "scope": "source.ahk",
         "completions": [
@@ -325,6 +325,10 @@
             { "trigger": "WinActive()", "contents": "WinActive(\"${1:WinTitle}\" [, \"${2:WinText}\", \"${3:ExcludeTitle}\", \"${4:ExcludeText]}\")" },
             { "trigger": "WinExist()", "contents": "WinExist(\"${1:WinTitle}\" [, \"${2:WinText}\", \"${3:ExcludeTitle}\", \"${4:ExcludeText]}\")" },
 
+            // Methods
+            { "trigger": "Clone()", "contents": "Clone()"},
+            { "trigger": "HasKey()", "contents": "HasKey(${1:Key})"},
+            { "trigger": "GetAddress()", "contents": "GetAddress(${1:Key})"},
             // Variables
 
             { "trigger": "A_AhkPath", "contents": "A_AhkPath" },

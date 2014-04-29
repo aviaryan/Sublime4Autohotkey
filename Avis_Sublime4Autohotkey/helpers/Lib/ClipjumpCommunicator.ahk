@@ -1,5 +1,5 @@
 ﻿/*
-Clipjump Communicator v3
+Clipjump Communicator v4
 ---------------------
 Use this function to momentarily disable/enable Clipjump's "Clipboard monitoring" .
 
@@ -46,8 +46,8 @@ CjControl(ByRef Code)
     if ! (IsExe := CjControl_check())
         return -1       ;Clipjump doesn't exist
 
-	TargetScriptTitle := "Clipjump" (IsExe=2 ? ".ahk ahk_class AutoHotkey" : ".exe ahk_class AutoHotkey")
-
+	TargetScriptTitle := "Clipjump" (IsExe=1 ? ".ahk ahk_class AutoHotkey" : ".exe ahk_class AutoHotkey")
+    
     VarSetCapacity(CopyDataStruct, 3*A_PtrSize, 0)
     SizeInBytes := (StrLen(Code) + 1) * (A_IsUnicode ? 2 : 1)
     NumPut(SizeInBytes, CopyDataStruct, A_PtrSize)
@@ -62,6 +62,8 @@ CjControl(ByRef Code)
     {
         SendMessage, 0x4a, 0, &CopyDataStruct,, %TargetScriptTitle%
         Z := ErrorLevel
+        if A_index>100
+            return -1 ;Timeout..
     }
 
     DetectHiddenWindows %Prev_DetectHiddenWindows%
@@ -75,14 +77,14 @@ CjControl(ByRef Code)
 }
 
 CjControl_check(){
-    
+
     HW := A_DetectHiddenWindows , TM := A_TitleMatchMode
     DetectHiddenWindows, On
     SetTitleMatchMode, 2
-    Process, Exist, Clipjump.exe
-    E := ErrorLevel , A := WinExist("\Clipjump.ahk - ahk_class AutoHotkey")
+    A := WinExist("\Clipjump.ahk - ahk_class AutoHotkey")
+    E := WinExist("\Clipjump.exe - ahk_class AutoHotkey")
     DetectHiddenWindows,% HW
     SetTitleMatchMode,% TM
 
-    return E ? 1 : (A ? 2 : 0)
+    return A ? 1 : (E ? 2 : 0)
 }

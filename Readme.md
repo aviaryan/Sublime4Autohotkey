@@ -4,7 +4,7 @@ Sublime 4 Autohotkey
 Sublime 4 Autohotkey is nothing but a patch for Sublime Text to accelerate Autohotkey development.  
   
 [Official Site](http://avi-win-tips.blogspot.com/2013/06/su4ahk.html)  
-[Download](https://github.com/avi-aryan/Sublime4Autohotkey/archive/master.zip)  
+[Download](https://github.com/aviaryan/Sublime4Autohotkey/archive/master.zip)  
   
   
 Installing
